@@ -1,103 +1,96 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+
+// The component has been updated to remove Next.js specific imports ('next/image', 'next/navigation')
+// to resolve compilation errors. Standard HTML elements and browser APIs are used instead.
+export default function AdminLoginPage() {
+  const [adminId, setAdminId] = useState('');
+  const [passcode, setPasscode] = useState('');
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault(); // prevent page reload
+    
+    // In a real application, you would add your validation and authentication logic here.
+    console.log('Logging in with:', { adminId, passcode });
+
+    // Replaced Next.js router with standard window.location to handle redirection.
+    window.location.href = '/admin/dashboard';
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      // Assuming you have a 'login-bg.png' in your /public directory
+      style={{ backgroundImage: "url('/login-bg.png')" }}
+    >
+      <div className="bg-white bg-opacity-90 backdrop-blur-md rounded-[11px] shadow-lg px-10 py-12 w-[671px] max-w-full">
+        {/* Logo + Heading */}
+        <div className="flex flex-col items-center mb-8">
+          {/* Replaced Next.js Image component with a standard <img> tag */}
+          <img
+            // Assuming you have a 'logo.svg' in your /public directory
+            src="/logo.svg"
+            alt="Pairova Logo"
+            width={98}
+            height={40}
+            className="mb-2"
+          />
+          <h1 className="text-[32px] font-semibold text-black font-poppins">
+            Admin Login
+          </h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Login Form */}
+        <form className="space-y-6" onSubmit={handleLogin}>
+          {/* Admin ID */}
+          <div>
+            <label
+              htmlFor="admin-id"
+              className="block text-sm font-medium text-gray-800 mb-1 font-poppins"
+            >
+              Admin ID
+            </label>
+            <input
+              id="admin-id"
+              type="text"
+              value={adminId}
+              onChange={(e) => setAdminId(e.target.value)}
+              placeholder="Enter ID"
+              required
+              className="w-full h-[75px] px-4 border border-[#818181] rounded-[7px] text-black font-poppins placeholder:text-[#c4c4c4] focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+
+          {/* Passcode */}
+          <div>
+            <label
+              htmlFor="passcode"
+              className="block text-sm font-medium text-gray-800 mb-1 font-poppins"
+            >
+              Passcode
+            </label>
+            <input
+              id="passcode"
+              type="password"
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              placeholder="Enter passcode"
+              required
+              className="w-full h-[75px] px-4 border border-[#818181] rounded-[7px] text-black font-poppins placeholder:text-[#c4c4c4] focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            className="w-full h-[50px] bg-black text-white rounded-md font-poppins font-medium hover:bg-gray-900 transition-colors"
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
+
