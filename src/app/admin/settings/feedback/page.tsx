@@ -1,8 +1,7 @@
-// src/app/admin/feedback/page.tsx
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import NextImage, { ImageProps as NextImageProps } from "next/image";
 import {
   MoreVertical,
   Search,
@@ -16,6 +15,42 @@ import {
 } from "lucide-react";
 
 /* =========================================================================
+   SafeImage – next/image with graceful fallback to <img>
+   ========================================================================= */
+
+type SafeImageProps = NextImageProps & { fallbackSrc?: string };
+
+function SafeImage({ fallbackSrc = "/logo.svg", onError, ...props }: SafeImageProps) {
+  const [failed, setFailed] = React.useState(false);
+
+  if (failed) {
+    const { alt, className, width, height, src } = props;
+    const resolvedSrc = typeof src === "string" ? src : (src as unknown as { src?: string })?.src ?? fallbackSrc;
+
+    // eslint-disable-next-line @next/next/no-img-element
+    return (
+      <img
+        src={resolvedSrc}
+        alt={alt ?? ""}
+        className={className}
+        width={Number(width) || 1}
+        height={Number(height) || 1}
+      />
+    );
+  }
+
+  return (
+    <NextImage
+      {...props}
+      onError={(e) => {
+        setFailed(true);
+        onError?.(e);
+      }}
+    />
+  );
+}
+
+/* =========================================================================
    Small UI helpers
    ========================================================================= */
 
@@ -24,7 +59,7 @@ function PageShell({ children }: { children: React.ReactNode }) {
 }
 
 function PrimaryButton(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: any }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 ) {
   const { className, ...rest } = props;
   return (
@@ -36,7 +71,7 @@ function PrimaryButton(
 }
 
 function OutlineButton(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: any }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 ) {
   const { className, ...rest } = props;
   return (
@@ -71,7 +106,7 @@ function Pill({
   children: React.ReactNode;
   color?: "green" | "blue" | "orange" | "gray";
 }) {
-  const map: Record<string, string> = {
+  const map: Record<"green" | "blue" | "orange" | "gray", string> = {
     green: "bg-green-50 text-green-700",
     blue: "bg-blue-50 text-blue-700",
     orange: "bg-orange-50 text-orange-700",
@@ -186,8 +221,7 @@ const MOCK: FeedbackRow[] = [
     userName: "John Williams",
     userEmail: "johnw@company.com",
     subject: "Can we have dark mode?",
-    message:
-      "It would be great to have a dark theme for late-night browsing.",
+    message: "It would be great to have a dark theme for late-night browsing.",
     category: "Feature",
     priority: "Medium",
     status: "In Progress",
@@ -284,7 +318,7 @@ function SlideOver({
           {/* Reporter */}
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-1 ring-gray-200">
-              <Image
+              <SafeImage
                 src={row.avatar || "/logo.svg"}
                 alt={row.userName}
                 width={40}
@@ -582,7 +616,7 @@ export default function FeedbackSettingsPage() {
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
                       <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full ring-1 ring-gray-200">
-                        <Image
+                        <SafeImage
                           src={r.avatar || "/logo.svg"}
                           alt={r.userName}
                           width={24}

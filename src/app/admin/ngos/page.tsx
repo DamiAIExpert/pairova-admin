@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   MoreVertical,
@@ -13,10 +12,36 @@ import {
   Briefcase,
   ChevronDown,
 } from "lucide-react";
+import NextImage, { ImageProps as NextImageProps } from "next/image";
+
+/* ============================================================================
+   SafeImage – next/image with graceful fallback for sandbox/preview
+============================================================================ */
+
+type SafeImageProps = NextImageProps & { fallbackSrc?: string };
+function SafeImage({ fallbackSrc = "/logo.svg", onError, ...props }: SafeImageProps) {
+  const [failed, setFailed] = React.useState(false);
+  if (failed) {
+    const { alt, className, width, height, src } = props;
+    const resolvedSrc = typeof src === "string" ? src : (src as unknown as { src?: string })?.src ?? fallbackSrc;
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={resolvedSrc} alt={alt ?? ""} className={className} width={Number(width) || 1} height={Number(height) || 1} />;
+  }
+  return (
+    <NextImage
+      {...props}
+      onError={(e) => {
+        setFailed(true);
+        onError?.(e);
+      }}
+    />
+  );
+}
 
 /* ============================================================================
    Types
 ============================================================================ */
+
 type Applicant = {
   id: string;
   name: string;
@@ -60,7 +85,7 @@ function PageShell({ children }: { children: React.ReactNode }) {
 }
 
 function PrimaryButton(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: any }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 ) {
   const { className, ...rest } = props;
   return (
@@ -266,7 +291,9 @@ export default function AdminNgosPage() {
           <div className="relative">
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setStatus(e.target.value as "All" | "Success" | "Pending" | "Denied")
+              }
               className="h-10 appearance-none rounded-lg border border-gray-200 bg-white px-3 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option>All</option>
@@ -321,7 +348,7 @@ export default function AdminNgosPage() {
                     <td className="px-4 py-4">
                       <Link href={viewHref} className="flex items-center gap-2 hover:underline">
                         <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-md ring-1 ring-gray-200">
-                          <Image
+                          <SafeImage
                             src={n.logo || "/logo.svg"}
                             alt={`${n.name} logo`}
                             width={24}

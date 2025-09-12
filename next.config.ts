@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   images: {
-    // allow remote placeholders + any future CDN(s) you’ll use
+    // Allow your common remote sources (add more as needed)
     remotePatterns: [
       { protocol: "https", hostname: "placehold.co" },
       { protocol: "https", hostname: "images.unsplash.com" },
@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    // trims bundle size for lucide-react imports
+    // Trim bundle size for lucide-react tree-shaking
     optimizePackageImports: ["lucide-react"],
   },
 };
