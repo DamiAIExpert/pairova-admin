@@ -176,7 +176,7 @@ export default function JobSeekersPage() {
   return (
     <PageShell>
       <div className="mb-4">
-        <h1 className="text-xl font-semibold text-gray-900">Candidate Profile</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-6">Candidate Profile</h1>
       </div>
 
       {/* Tabs + tools */}

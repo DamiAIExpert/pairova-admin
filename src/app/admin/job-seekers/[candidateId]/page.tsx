@@ -203,7 +203,7 @@ export default function CandidateDetailPage({
           >
             <ChevronLeft className="h-4 w-4" />
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Candidate Profile</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-6">Candidate Profile</h1>
         </div>
       </div>
 

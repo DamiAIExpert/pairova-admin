@@ -42,7 +42,7 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-[1200px]">
       {/* Header row */}
       <div className="flex flex-col gap-4 border-b border-gray-200 py-6 md:flex-row md:items-center md:justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-6">Settings</h1>
 
         <div className="flex items-center gap-3">
           {/* search */}

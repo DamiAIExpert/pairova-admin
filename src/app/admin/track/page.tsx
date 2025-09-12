@@ -332,7 +332,7 @@ export default function AuditLogPage() {
     <PageShell>
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Audit Log</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-6">Audit Log</h1>
 
         <div className="flex items-center gap-2">
           <div className="hidden items-center rounded-lg border border-gray-200 pl-3 pr-2 text-sm text-gray-700 sm:flex">
