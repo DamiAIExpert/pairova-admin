@@ -1,9 +1,7 @@
-// src/app/admin/settings/page.tsx
 "use client";
 
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   MoreVertical,
@@ -23,7 +21,7 @@ function PageShell({ children }: { children: React.ReactNode }) {
 }
 
 function PrimaryButton(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: any }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 ) {
   const { className, ...rest } = props;
   return (
@@ -71,28 +69,27 @@ function PriorityStars({ n }: { n: number }) {
 type SmsRow = {
   id: string;
   name: string;
-  country: string; // "South Africa", "Nigeria", etc.
-  flag: string; // emoji flag for quick placeholder
+  country: string;
+  flag: string;
   status: "Active" | "Inactive";
-  priority: number; // 1..5
+  priority: number;
   logo?: string;
 };
 
 const SMS_PROVIDERS: SmsRow[] = [
-  { id: "twilio-za-1", name: "Twilio",         country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 5, logo: "/logo.svg" },
-  { id: "nexmo-ng",   name: "Nexmo",          country: "Nigeria",      flag: "🇳🇬", status: "Inactive", priority: 4, logo: "/logo.svg" },
-  { id: "africa-za-1",name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 5, logo: "/logo.svg" },
-  { id: "twilio-za-2",name: "Twilio",         country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 4, logo: "/logo.svg" },
-  { id: "africa-za-2",name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 5, logo: "/logo.svg" },
-  { id: "africa-za-3",name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 4, logo: "/logo.svg" },
-  { id: "twilio-za-3",name: "Twilio",         country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 3, logo: "/logo.svg" },
-  { id: "africa-za-4",name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 5, logo: "/logo.svg" },
-  { id: "africa-za-5",name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 4, logo: "/logo.svg" },
-  { id: "twilio-za-4",name: "Twilio",         country: "South Africa", flag: "🇿🇦", status: "Active",   priority: 4, logo: "/logo.svg" },
+  { id: "twilio-za-1", name: "Twilio", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 5, logo: "/logo.svg" },
+  { id: "nexmo-ng", name: "Nexmo", country: "Nigeria", flag: "🇳🇬", status: "Inactive", priority: 4, logo: "/logo.svg" },
+  { id: "africa-za-1", name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 5, logo: "/logo.svg" },
+  { id: "twilio-za-2", name: "Twilio", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 4, logo: "/logo.svg" },
+  { id: "africa-za-2", name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 5, logo: "/logo.svg" },
+  { id: "africa-za-3", name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 4, logo: "/logo.svg" },
+  { id: "twilio-za-3", name: "Twilio", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 3, logo: "/logo.svg" },
+  { id: "africa-za-4", name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 5, logo: "/logo.svg" },
+  { id: "africa-za-5", name: "Africastalking", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 4, logo: "/logo.svg" },
+  { id: "twilio-za-4", name: "Twilio", country: "South Africa", flag: "🇿🇦", status: "Active", priority: 4, logo: "/logo.svg" },
 ];
 
 /* --------------------------- provider slug mapper -------------------------- */
-/** Map table names -> the config page slugs used in /admin/settings/sms/[id] */
 const SMS_NAME_TO_SLUG: Record<string, string> = {
   twilio: "twilio",
   nexmo: "nexmo",
@@ -105,14 +102,10 @@ const SMS_NAME_TO_SLUG: Record<string, string> = {
 export default function SmsSettingsIndexPage() {
   const router = useRouter();
 
-  // search
   const [query, setQuery] = React.useState("");
-
-  // overflow menu
   const [menuFor, setMenuFor] = React.useState<string | null>(null);
   const menuRef = useOutsideClose(() => setMenuFor(null));
 
-  // filters popover
   const [filtersOpen, setFiltersOpen] = React.useState(false);
   const filtersRef = useOutsideClose(() => setFiltersOpen(false));
 
@@ -125,26 +118,18 @@ export default function SmsSettingsIndexPage() {
 
   const filtered = React.useMemo(() => {
     const q = query.toLowerCase().trim();
-
     return SMS_PROVIDERS.filter((p) => {
-      // text search (name/country/status)
       const matchesText =
         !q ||
         p.name.toLowerCase().includes(q) ||
         p.country.toLowerCase().includes(q) ||
         p.status.toLowerCase().includes(q);
-
-      // status
       const matchesStatus = statusFilter === "all" || p.status === statusFilter;
-
-      // country
       const matchesCountry = countryFilter === "all" || p.country === countryFilter;
-
       return matchesText && matchesStatus && matchesCountry;
     });
   }, [query, statusFilter, countryFilter]);
 
-  // navigate to config page
   const goConfigure = (row: SmsRow) => {
     const slug =
       SMS_NAME_TO_SLUG[row.name.toLowerCase()] ??
@@ -163,7 +148,7 @@ export default function SmsSettingsIndexPage() {
             <Search className="mr-2 h-4 w-4 text-gray-500" />
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
               placeholder="Search providers..."
               className="h-9 w-64 bg-transparent outline-none"
             />
@@ -357,7 +342,7 @@ export default function SmsSettingsIndexPage() {
           </table>
         </div>
 
-        {/* Footer: pagination + export */}
+        {/* Footer */}
         <div className="flex flex-col items-center justify-between gap-3 border-t px-4 py-3 sm:flex-row">
           <div className="flex items-center gap-1">
             {["1", "2", "3", "4"].map((p, i) => (

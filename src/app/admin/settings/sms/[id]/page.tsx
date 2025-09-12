@@ -1,11 +1,9 @@
-
-//src/app/admin/settings/sms/[id]/page.tsx
-
 "use client";
 
 import React from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronDown } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 
 /* ----------------------------- shared minis ----------------------------- */
 function PageShell({ children }: { children: React.ReactNode }) {
@@ -38,7 +36,7 @@ function TextInput(
   );
 }
 function PrimaryButton(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: any }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 ) {
   const { className, ...rest } = props;
   return (
@@ -49,7 +47,7 @@ function PrimaryButton(
   );
 }
 function OutlineButton(
-  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: any }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }
 ) {
   const { className, ...rest } = props;
   return (
@@ -138,7 +136,6 @@ function SoftSelect({
 }
 
 /* ---------------------------------- page ---------------------------------- */
-import { useParams, useRouter } from "next/navigation";
 
 const PROVIDERS: Option[] = [
   { label: "Twilio", value: "twilio" },
@@ -182,11 +179,11 @@ export default function SmsProviderConfigPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const save = () => {
+  const save = (_e: React.MouseEvent<HTMLButtonElement>) => {
     localStorage.setItem(STORAGE_PREFIX + (id || fallback), JSON.stringify(cfg));
     alert("Saved (mock). Replace with your API call.");
   };
-  const testSms = () => alert("Test SMS sent (mock).");
+  const testSms = (_e: React.MouseEvent<HTMLButtonElement>) => alert("Test SMS sent (mock).");
 
   if (!isKnown) {
     return (
@@ -227,21 +224,27 @@ export default function SmsProviderConfigPage() {
           <TextInput
             label="Secret Key"
             value={cfg.secretKey}
-            onChange={(e) => setCfg((s) => ({ ...s, secretKey: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setCfg((s) => ({ ...s, secretKey: e.target.value }))
+            }
             placeholder=""
           />
 
           <TextInput
             label="Sender ID"
             value={cfg.senderId}
-            onChange={(e) => setCfg((s) => ({ ...s, senderId: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setCfg((s) => ({ ...s, senderId: e.target.value }))
+            }
             placeholder=""
           />
 
           <TextInput
             label="API Key"
             value={cfg.apiKey}
-            onChange={(e) => setCfg((s) => ({ ...s, apiKey: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setCfg((s) => ({ ...s, apiKey: e.target.value }))
+            }
             placeholder=""
           />
 
@@ -267,4 +270,3 @@ export default function SmsProviderConfigPage() {
     </PageShell>
   );
 }
-

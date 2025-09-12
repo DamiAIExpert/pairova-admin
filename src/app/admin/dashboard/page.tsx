@@ -1,6 +1,6 @@
 "use client";
 
-import React, { JSX } from "react";
+import React from "react";
 import Image from "next/image";
 import {
   BarChart,
@@ -30,8 +30,12 @@ import YearSelect from "@/components/YearSelect";
 
 /* ----------------------------- DATA ----------------------------- */
 
-// 2024 + 2022 (demo) so the year dropdown actually switches datasets
-const performance2024 = [
+interface ChartDatum {
+  name: string;
+  value: number;
+}
+
+const performance2024: ChartDatum[] = [
   { name: "Jan", value: 1500 },
   { name: "Feb", value: 1800 },
   { name: "Mar", value: 2250 },
@@ -45,7 +49,8 @@ const performance2024 = [
   { name: "Nov", value: 2850 },
   { name: "Dec", value: 2900 },
 ];
-const performance2022 = [
+
+const performance2022: ChartDatum[] = [
   { name: "Jan", value: 900 },
   { name: "Feb", value: 1100 },
   { name: "Mar", value: 1500 },
@@ -59,7 +64,8 @@ const performance2022 = [
   { name: "Nov", value: 2050 },
   { name: "Dec", value: 2100 },
 ];
-const performanceByYear: Record<number, { name: string; value: number }[]> = {
+
+const performanceByYear: Record<number, ChartDatum[]> = {
   2024: performance2024,
   2022: performance2022,
 };
@@ -73,8 +79,6 @@ type UserRow = {
   status: "success" | "pending" | "denied";
 };
 
-// Use dependable online avatars (works great with next/image if remotePatterns allow;
-// otherwise they still render fine in dev with unoptimized).
 const usersData: UserRow[] = [
   {
     id: "u1",
@@ -102,7 +106,9 @@ const usersData: UserRow[] = [
   },
 ];
 
-const nonprofits = [
+type NonProfit = { name: string; type: string; city: string; logo: string };
+
+const nonprofits: NonProfit[] = [
   { name: "Fable", type: "Private Company", city: "Abuja", logo: "/admin-ngo/Fable logo 1.png" },
   { name: "NYT Cooking", type: "Private Company", city: "Abuja", logo: "/admin-ngo/NYT Cooking logo 1.png" },
   { name: "SiriusXM", type: "Private Company", city: "Abuja", logo: "/admin-ngo/SiriusXM logo 1.png" },
@@ -120,7 +126,10 @@ function TrendBadge({ value = "7%" }: { value?: string }) {
 }
 
 function StatusPill({ status }: { status: UserRow["status"] }) {
-  const map: Record<UserRow["status"], { cls: string; icon: JSX.Element; text: string }> = {
+  const map: Record<
+    UserRow["status"],
+    { cls: string; icon: React.ReactElement; text: string }
+  > = {
     success: { cls: "bg-emerald-50 text-emerald-700", icon: <CheckCircle2 className="h-3.5 w-3.5" />, text: "Success" },
     pending: { cls: "bg-amber-50 text-amber-700", icon: <Clock3 className="h-3.5 w-3.5" />, text: "Pending" },
     denied: { cls: "bg-rose-50 text-rose-700", icon: <XCircle className="h-3.5 w-3.5" />, text: "Denied" },
@@ -200,16 +209,24 @@ function MetricCard({
   );
 }
 
-function CustomTooltip({ active, payload, label }: any) {
-  if (active && payload?.length) {
-    return (
-      <div className="rounded-md bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
-        <div className="font-semibold">{label}</div>
-        <div>Value: {payload[0].value}</div>
-      </div>
-    );
-  }
-  return null;
+/* -------- Tooltip: version-agnostic -------- */
+
+type TooltipPayloadItem = { value?: number };
+type TooltipLike = {
+  active?: boolean;
+  label?: string | number;
+  payload?: TooltipPayloadItem[];
+};
+
+function CustomTooltip(props: TooltipLike) {
+  if (!props.active || !props.payload?.length) return null;
+  const value = props.payload[0]?.value ?? "-";
+  return (
+    <div className="rounded-md bg-slate-900 px-3 py-2 text-xs text-white shadow-lg">
+      <div className="font-semibold">{props.label}</div>
+      <div>Value: {value}</div>
+    </div>
+  );
 }
 
 /* ------------------------------- PAGE -------------------------------- */
@@ -224,10 +241,18 @@ export default function AdminDashboardPage() {
   );
   const chartData = performanceByYear[year] ?? performance2024;
 
+  // Option 2: version-agnostic handler
+  const handleMouseMove = (s: unknown) => {
+    const state = s as { isTooltipActive?: boolean; activeLabel?: string };
+    if (state?.isTooltipActive) {
+      setActiveBar(state.activeLabel ?? null);
+    } else {
+      setActiveBar(null);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-[1400px] px-6 py-6 font-poppins antialiased [text-rendering:optimizeLegibility]">
-      {/* Removed extra Notifications bell/UI to avoid duplication and crowding */}
-
       <main className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
         {/* LEFT */}
         <section className="space-y-6">
@@ -268,7 +293,7 @@ export default function AdminDashboardPage() {
                   <BarChart
                     data={chartData}
                     barSize={12}
-                    onMouseMove={(s: any) => s?.isTooltipActive && setActiveBar(s.activeLabel ?? null)}
+                    onMouseMove={handleMouseMove}
                     onMouseLeave={() => setActiveBar(null)}
                   >
                     <XAxis
@@ -332,7 +357,7 @@ export default function AdminDashboardPage() {
                   <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                   <input
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
                     placeholder="Search users…"
                     className="h-9 w-56 rounded-md border border-slate-200 pl-8 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-500 focus:ring-2 focus:ring-slate-200"
                   />
