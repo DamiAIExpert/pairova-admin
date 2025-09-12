@@ -35,7 +35,6 @@ function TabLink({
   );
 }
 
-// ✅ Must be async so Next resolves `params` correctly
 export default async function NgoJobsLayout({
   children,
   params,
