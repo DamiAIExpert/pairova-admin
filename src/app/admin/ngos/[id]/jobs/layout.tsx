@@ -1,15 +1,13 @@
-"use client";
-
-import React from "react";
+// src/app/admin/ngos/[id]/jobs/layout.tsx
+import { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 
 /**
  * Jobs layout for an NGO.
- * - When you're on `/admin/ngos/[id]/jobs` it just shows a header and renders children (the jobs list).
- * - When you're on a specific job (e.g. `/admin/ngos/[id]/jobs/[jobId]`, `/edit`, `/applicants`)
- *   it shows a secondary tab bar for that job: Overview | Edit | Applicants.
+ * - At `/admin/ngos/[id]/jobs` it shows a header and children (the jobs list).
+ * - At `/admin/ngos/[id]/jobs/[jobId]`, `/edit`, `/applicants` it also shows tabs.
  */
 
 function TabLink({
@@ -19,7 +17,7 @@ function TabLink({
 }: {
   href: string;
   isActive: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <Link
@@ -37,27 +35,21 @@ function TabLink({
   );
 }
 
-export default function NgoJobsLayout({
+// ✅ Must be async so Next resolves `params` correctly
+export default async function NgoJobsLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   params: { id: string };
 }) {
   const pathname = usePathname();
 
-  // Parse the current path to determine if we're inside a specific job.
-  // Expected shapes:
-  // /admin/ngos/[id]/jobs
-  // /admin/ngos/[id]/jobs/[jobId]
-  // /admin/ngos/[id]/jobs/[jobId]/edit
-  // /admin/ngos/[id]/jobs/[jobId]/applicants
+  // Parse path to detect job context
   const parts = (pathname || "/").split("/").filter(Boolean);
   const jobsIdx = parts.indexOf("jobs");
   const jobId =
-    jobsIdx >= 0 && parts.length > jobsIdx + 1
-      ? parts[jobsIdx + 1]
-      : undefined;
+    jobsIdx >= 0 && parts.length > jobsIdx + 1 ? parts[jobsIdx + 1] : undefined;
 
   const onOverview = jobId && parts[jobsIdx + 2] === undefined;
   const onEdit = jobId && parts.includes("edit");
@@ -92,11 +84,9 @@ export default function NgoJobsLayout({
         </div>
       </div>
 
-      {/* Title (list vs job context) */}
+      {/* Title */}
       {!jobId ? (
-        <h1 className="mb-4 text-xl font-semibold text-gray-900">
-          Jobs Uploaded
-        </h1>
+        <h1 className="mb-4 text-xl font-semibold text-gray-900">Jobs Uploaded</h1>
       ) : (
         <div className="mb-4">
           <h1 className="text-xl font-semibold text-gray-900">Job Management</h1>
@@ -106,7 +96,7 @@ export default function NgoJobsLayout({
         </div>
       )}
 
-      {/* Job-level tabs (only when viewing a specific job) */}
+      {/* Tabs (only if viewing a specific job) */}
       {jobBase ? (
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <TabLink href={jobBase} isActive={!!onOverview}>
