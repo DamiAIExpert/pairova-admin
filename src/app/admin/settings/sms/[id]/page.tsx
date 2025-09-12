@@ -179,11 +179,11 @@ export default function SmsProviderConfigPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const save = (_e: React.MouseEvent<HTMLButtonElement>) => {
+  const save = () => {
     localStorage.setItem(STORAGE_PREFIX + (id || fallback), JSON.stringify(cfg));
     alert("Saved (mock). Replace with your API call.");
   };
-  const testSms = (_e: React.MouseEvent<HTMLButtonElement>) => alert("Test SMS sent (mock).");
+  const testSms = () => alert("Test SMS sent (mock).");
 
   if (!isKnown) {
     return (

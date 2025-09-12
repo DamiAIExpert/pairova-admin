@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 // The component has been updated to remove Next.js specific imports ('next/image', 'next/navigation')
 // to resolve compilation errors. Standard HTML elements and browser APIs are used instead.
@@ -27,9 +28,8 @@ export default function AdminLoginPage() {
       <div className="bg-white bg-opacity-90 backdrop-blur-md rounded-[11px] shadow-lg px-10 py-12 w-[671px] max-w-full">
         {/* Logo + Heading */}
         <div className="flex flex-col items-center mb-8">
-          {/* Replaced Next.js Image component with a standard <img> tag */}
-          <img
-            // Assuming you have a 'logo.svg' in your /public directory
+          {/* Using Next.js Image component */}
+          <Image
             src="/logo.svg"
             alt="Pairova Logo"
             width={98}

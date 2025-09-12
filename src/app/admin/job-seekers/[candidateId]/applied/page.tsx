@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /* Small UI helpers                                                           */
@@ -174,11 +174,7 @@ function AppliedCard({ item }: { item: Applied }) {
 /* Page                                                                        */
 /* -------------------------------------------------------------------------- */
 
-export default function AppliedJobsPage({
-  params,
-}: {
-  params: { candidateId: string };
-}) {
+export default function AppliedJobsPage() {
   return (
     <PageShell>
       <h1 className="mb-4 text-xl font-semibold text-gray-900">Applied Jobs</h1>

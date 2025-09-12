@@ -1,7 +1,6 @@
 // src/components/settings/SettingsCard.tsx
 "use client";
 import Link from "next/link";
-import { type ComponentProps } from "react";
 
 export default function SettingsCard({
   title,

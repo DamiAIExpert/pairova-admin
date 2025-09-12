@@ -27,7 +27,6 @@ function SafeImage({ fallbackSrc = "/logo.svg", onError, ...props }: SafeImagePr
     const { alt, className, width, height, src } = props;
     const resolvedSrc = typeof src === "string" ? src : (src as unknown as { src?: string })?.src ?? fallbackSrc;
 
-    // eslint-disable-next-line @next/next/no-img-element
     return (
       <img
         src={resolvedSrc}

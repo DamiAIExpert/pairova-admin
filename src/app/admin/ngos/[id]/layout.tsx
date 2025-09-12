@@ -1,35 +1,60 @@
 "use client";
 
 import React from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, MoreHorizontal } from "lucide-react";
+
+/**
+ * Tab component for navigation
+ */
+function Tab({
+  href,
+  active,
+  children,
+}: {
+  href: string;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className={[
+        "inline-flex items-center rounded-full px-3 py-1.5 text-sm",
+        active
+          ? "bg-gray-900 font-medium text-white"
+          : "border border-gray-200 bg-white text-gray-800 hover:bg-gray-50",
+      ].join(" ")}
+      aria-current={active ? "page" : undefined}
+    >
+      {children}
+    </Link>
+  );
+}
 
 /**
  * NGO detail layout
  * - Wraps all routes under /admin/ngos/[id]
  * - Renders a sticky header with back button, org avatar, name placeholder and tabs
- * - Tabs:
- *    • Overview      -> /admin/ngos/[id]
- *    • Edit          -> /admin/ngos/[id]/edit
- *    • Jobs          -> /admin/ngos/[id]/jobs
  */
 export default function NgoLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
   const pathname = usePathname();
-
-  const id = params.id;
+  
+  // Extract id from pathname since params is now async
+  const pathSegments = pathname.split('/');
+  const id = pathSegments[pathSegments.indexOf('ngos') + 1];
 
   // Determine which tab should be active
   const isOverview = pathname === `/admin/ngos/${id}`;
-  const isEdit = pathname.startsWith(`/admin/ngos/${id}/edit`);
+  const isEdit = pathname === `/admin/ngos/${id}/edit`;
   const isJobs = pathname.startsWith(`/admin/ngos/${id}/jobs`);
 
   return (
@@ -48,7 +73,7 @@ export default function NgoLayout({
               <ArrowLeft className="h-4 w-4" />
             </button>
 
-            {/* Brand block (placeholder values – page contents can show real data) */}
+            {/* Brand block */}
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-gray-200">
                 <Image
@@ -61,7 +86,6 @@ export default function NgoLayout({
               </div>
               <div>
                 <div className="text-sm font-semibold text-gray-900">
-                  {/* Put the real NGO name on child pages if you fetch it there */}
                   Organization #{id}
                 </div>
                 <div className="text-xs text-gray-600">Non Profit • Detail</div>
@@ -96,32 +120,5 @@ export default function NgoLayout({
       {/* Routed page content */}
       {children}
     </div>
-  );
-}
-
-/* --------------------------------- UI --------------------------------- */
-
-function Tab({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={[
-        "inline-flex items-center rounded-full px-3 py-1.5 text-sm",
-        active
-          ? "bg-gray-900 font-medium text-white"
-          : "border border-gray-200 bg-white text-gray-800 hover:bg-gray-50",
-      ].join(" ")}
-      aria-current={active ? "page" : undefined}
-    >
-      {children}
-    </Link>
   );
 }

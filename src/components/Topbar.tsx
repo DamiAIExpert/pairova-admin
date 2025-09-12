@@ -178,7 +178,7 @@ export default function Topbar() {
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-gray-200 bg-white/80 backdrop-blur">
-      <div className="relative mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6">
+      <div className="relative mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between px-4 sm:px-6">
         {/* Left: Logo + Welcome */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">

@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   CheckCircle2,
   TrendingUp,
@@ -228,11 +229,7 @@ function LabeledBlock({
 
 /* --------------------------------- Page --------------------------------- */
 
-export default function ApplicantProfilePage({
-  params,
-}: {
-  params: { id: string; jobId: string; applicantId: string };
-}) {
+export default function ApplicantProfilePage() {
   return (
     <PageShell>
       <h1 className="mb-4 text-lg font-semibold text-gray-900">
@@ -247,7 +244,7 @@ export default function ApplicantProfilePage({
             <div className="text-sm font-semibold text-gray-900">Overview</div>
 
             <div className="flex items-center gap-3">
-              <img
+              <Image
                 src={applicant.avatar}
                 alt={applicant.name}
                 width={56}

@@ -249,11 +249,6 @@ export default function AuditLogPage() {
   const [showColCandidateId, setShowColCandidateId] = React.useState(false);
 
   // Sorting
-  const sortOptions = [
-    { label: "Recently Added", value: "recent" },
-    { label: "Sort by Name", value: "name" },
-    { label: "Sort by Date", value: "date" },
-  ];
   const [sortBy, setSortBy] = React.useState<string>("recent");
 
   // Timestamp display format (menu on header)

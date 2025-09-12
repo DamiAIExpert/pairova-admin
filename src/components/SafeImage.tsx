@@ -28,7 +28,6 @@ export default function SafeImage({
     const { alt, className, width, height, src } = props;
     const resolvedSrc = resolveSrc(src) || fallbackSrc;
 
-    // eslint-disable-next-line @next/next/no-img-element
     return (
       <img
         src={resolvedSrc}

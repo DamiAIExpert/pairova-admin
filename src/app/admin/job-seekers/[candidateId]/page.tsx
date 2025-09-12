@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ChevronLeft,
   Pencil,
@@ -10,7 +11,6 @@ import {
   MapPin,
   CalendarDays,
   BadgeCheck,
-  FileText,
   Paperclip,
   School,
   BriefcaseBusiness,
@@ -75,7 +75,7 @@ function ChipFile({ name }: { name: string }) {
 function Avatar({ seed, size = 56 }: { seed: string; size?: number }) {
   const src = `https://avatar.vercel.sh/${encodeURIComponent(seed)}.png?size=96`;
   return (
-    <img
+    <Image
       src={src}
       alt={seed}
       width={size}

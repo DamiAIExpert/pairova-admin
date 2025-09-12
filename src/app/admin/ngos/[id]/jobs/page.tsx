@@ -9,7 +9,7 @@ import { Search, Trash2, MapPin } from "lucide-react";
 /* ----------------------------- small helpers ---------------------------- */
 
 function PageShell({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto max-w-[1200px] px-6 pb-12">{children}</div>;
+  return <div className="mx-auto max-w-[1200px] px-6 pb-12 pt-4">{children}</div>;
 }
 
 function Tag({ children }: { children: React.ReactNode }) {
@@ -42,7 +42,7 @@ const ALL_JOBS: JobCardData[] = [
   { id: "job-1003", title: "Legal Volunteer", org: "Quicken", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Part Time", exp: "1-3 Years", applicants: 50, updated: "1 day ago" },
   { id: "job-1004", title: "Charity Manager", org: "Height", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Full Time", exp: "1-3 Years", applicants: 50, price: "$100 per month", updated: "1 day ago" },
   { id: "job-1005", title: "Software Tester", org: "Espensify", city: "Abuja", country: "Nigeria", mode: "Onsite", type: "Full Time", exp: "1-3 Years", applicants: 50, price: "$100 per month", updated: "1 day ago" },
-  { id: "job-1006", title: "Professional Agent", org: "Masterclass", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Full Time", exp: "1-3 Years", applicants: 50, price: "$100 per month", updated: "1 day ago" },
+  { id: "job-1006", title: "Professional Agent", org: "Masterclass", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Full Time", exp: "1-3 Years", applicants: 50, updated: "1 day ago" },
   { id: "job-1007", title: "Non-Profit Grant Expert", org: "Navan", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Full Time", exp: "1-3 Years", applicants: 50, price: "$100 per month", updated: "1 day ago" },
   { id: "job-1008", title: "Non-Profit Grant Expert", org: "Lyssna", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Full Time", exp: "1-3 Years", applicants: 50, price: "$100 per month", updated: "1 day ago" },
   { id: "job-1009", title: "Non-Profit Grant Expert", org: "Shalom Health", city: "Abuja", country: "Nigeria", mode: "Hybrid", type: "Full Time", exp: "1-3 Years", applicants: 50, price: "$100 per month", updated: "1 day ago" },
@@ -52,6 +52,13 @@ const ALL_JOBS: JobCardData[] = [
 ];
 
 const COUNTRIES = ["All", "Nigeria", "South Africa", "Kenya", "Ghana"];
+const CITIES_BY_COUNTRY: Record<string, string[]> = {
+  All: ["All City"],
+  Nigeria: ["All City", "Abuja", "Lagos", "Ibadan"],
+  "South Africa": ["All City", "Johannesburg", "Cape Town"],
+  Kenya: ["All City", "Nairobi", "Mombasa"],
+  Ghana: ["All City", "Accra", "Kumasi"],
+};
 
 /* ------------------------------- Job Card ------------------------------- */
 
@@ -96,7 +103,7 @@ function JobCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="truncate text-[13px] font-medium text-gray-900">
               {job.title}
             </div>
@@ -137,7 +144,11 @@ function JobCard({
       {/* footer */}
       <div className="flex items-center justify-between">
         <div className="text-[12px] font-semibold text-gray-900">
-          {job.type === "Volunteer" ? <span className="text-gray-800">Volunteer</span> : job.price || "-"}
+          {job.type === "Volunteer" ? (
+            <span className="text-gray-800">Volunteer</span>
+          ) : (
+            job.price || "-"
+          )}
         </div>
 
         <Link
@@ -159,15 +170,27 @@ export default function NgoJobsGridPage({
   params: { id: string };
 }) {
   const router = useRouter();
+
+  // filters
   const [query, setQuery] = React.useState("");
   const [country, setCountry] = React.useState<string>("Nigeria");
   const [city, setCity] = React.useState<string>("All City");
+
+  // pagination
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState<number>(9);
 
   // selection
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
 
   const allJobs = React.useMemo(() => ALL_JOBS, []);
+  const cities = React.useMemo(() => CITIES_BY_COUNTRY[country] ?? ["All City"], [country]);
+
+  // ensure city option stays valid when country changes
+  React.useEffect(() => {
+    if (!cities.includes(city)) setCity("All City");
+  }, [cities, city]);
+
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     return allJobs.filter((j) => {
@@ -182,28 +205,31 @@ export default function NgoJobsGridPage({
     });
   }, [allJobs, query, country, city]);
 
-  const allFilteredIds = React.useMemo(
-    () => filtered.map((j) => j.id),
-    [filtered],
-  );
-  const allSelected =
-    allFilteredIds.length > 0 &&
-    allFilteredIds.every((id) => selectedIds.includes(id));
+  // reset to first page when filters change
+  React.useEffect(() => {
+    setPage(1);
+  }, [query, country, city, perPage]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const paginated = filtered.slice(start, end);
+
+  const allFilteredIds = React.useMemo(() => filtered.map((j) => j.id), [filtered]);
+  const allSelected = allFilteredIds.length > 0 && allFilteredIds.every((id) => selectedIds.includes(id));
 
   const toggleSelectAll = () => {
     if (allSelected) {
-      // unselect all visible
+      // unselect all visible (respect current filters)
       setSelectedIds((prev) => prev.filter((id) => !allFilteredIds.includes(id)));
     } else {
-      // add all visible
+      // add all visible (respect current filters)
       setSelectedIds((prev) => Array.from(new Set([...prev, ...allFilteredIds])));
     }
   };
 
   const toggleOne = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const onDeleteJob = (id: string) => {
@@ -215,6 +241,7 @@ export default function NgoJobsGridPage({
   const onDeleteAll = () => {
     if (!confirm("Delete ALL jobs for this NGO?")) return;
     alert("Deleted all jobs (mock).");
+    // Wire to API here as needed
   };
 
   return (
@@ -227,7 +254,7 @@ export default function NgoJobsGridPage({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search.."
+            placeholder="Search..."
             className="h-10 w-full rounded-lg border border-gray-200 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200"
           />
         </div>
@@ -251,7 +278,7 @@ export default function NgoJobsGridPage({
           value={city}
           onChange={(e) => setCity(e.target.value)}
         >
-          {["All City", "Abuja", "Lagos"].map((c) => (
+          {cities.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -267,8 +294,8 @@ export default function NgoJobsGridPage({
         </button>
       </div>
 
-      {/* Select all */}
-      <div className="mb-3">
+      {/* Select all & counts */}
+      <div className="mb-3 flex flex-wrap items-center gap-3">
         <button
           type="button"
           onClick={toggleSelectAll}
@@ -276,27 +303,54 @@ export default function NgoJobsGridPage({
         >
           {allSelected ? "Unselect all" : "Select all"}
         </button>
+        <span className="text-sm text-gray-600">
+          Showing <span className="font-medium">{paginated.length}</span> of{" "}
+          <span className="font-medium">{filtered.length}</span> jobs
+        </span>
+        {selectedIds.length > 0 && (
+          <span className="rounded-md bg-gray-100 px-2 py-1 text-xs text-gray-800">
+            {selectedIds.length} selected
+          </span>
+        )}
       </div>
 
-      {/* Grid of cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((job) => (
-          <JobCard
-            key={job.id}
-            job={job}
-            ngoId={params.id}
-            selected={selectedIds.includes(job.id)}
-            onToggleSelect={() => toggleOne(job.id)}
-            onDelete={onDeleteJob}
-          />
-        ))}
-      </div>
+      {/* Grid or empty state */}
+      {paginated.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center">
+          <div className="mb-1 text-sm font-semibold text-gray-900">No jobs match your filters</div>
+          <div className="text-sm text-gray-600">Try adjusting search, country, or city.</div>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {paginated.map((job) => (
+            <JobCard
+              key={job.id}
+              job={job}
+              ngoId={params.id}
+              selected={selectedIds.includes(job.id)}
+              onToggleSelect={() => toggleOne(job.id)}
+              onDelete={onDeleteJob}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Footer controls */}
       <div className="mt-6 flex flex-col items-center justify-between gap-3 sm:flex-row">
-        {/* Pagination (static demo) */}
+        {/* Pagination */}
         <div className="flex items-center gap-1">
-          {[1, 2, 3, 4].map((p) => (
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className={`h-8 min-w-[40px] rounded-md border px-2 text-sm ${
+              page === 1
+                ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400"
+                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            Prev
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => setPage(p)}
@@ -309,15 +363,40 @@ export default function NgoJobsGridPage({
               {p}
             </button>
           ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">Show per page:</span>
-          <button className="inline-flex h-8 min-w-[40px] items-center justify-center rounded-md border border-gray-200 px-2 text-sm">
-            9
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className={`h-8 min-w-[40px] rounded-md border px-2 text-sm ${
+              page === totalPages
+                ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400"
+                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            Next
           </button>
         </div>
 
+        {/* Per-page selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">Show per page:</span>
+          <div className="flex items-center gap-1">
+            {[9, 12, 18].map((n) => (
+              <button
+                key={n}
+                onClick={() => setPerPage(n)}
+                className={`inline-flex h-8 min-w-[40px] items-center justify-center rounded-md border px-2 text-sm ${
+                  perPage === n
+                    ? "border-gray-900 bg-gray-900 text-white"
+                    : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Danger action */}
         <button
           onClick={onDeleteAll}
           className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black"

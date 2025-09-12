@@ -3,6 +3,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Check, ChevronDown, Upload, X, Plus } from "lucide-react";
 
 /* ------------------------------ Small UI kit ------------------------------ */
@@ -321,10 +322,12 @@ export default function CandidateEditPage({
           <div className="flex flex-wrap items-center gap-4">
             <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-100 ring-1 ring-inset ring-gray-200">
               {avatarUrl ? (
-                <img
+                <Image
                   src={avatarUrl}
                   alt="avatar preview"
                   className="h-full w-full object-cover"
+                  width={64}
+                  height={64}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">

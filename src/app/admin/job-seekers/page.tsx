@@ -3,6 +3,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Search,
   SlidersHorizontal,
@@ -40,7 +41,7 @@ function Avatar({ seed }: { seed: string }) {
   // deterministic, no-auth avatar
   const src = `https://avatar.vercel.sh/${encodeURIComponent(seed)}.png?size=96`;
   return (
-    <img
+    <Image
       src={src}
       alt={seed}
       className="h-7 w-7 rounded-full object-cover"

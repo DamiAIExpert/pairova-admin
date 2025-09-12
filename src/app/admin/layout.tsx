@@ -10,14 +10,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <Sidebar />
 
       {/* Content area shifted right by rail width */}
-      <div className="ml-20">
+      <div className="ml-20 min-h-screen">
         {/* Sticky top bar */}
         <div className="sticky top-0 z-30">
           <Topbar />
         </div>
 
         {/* Page content below topbar */}
-        <main className="p-6">{children}</main>
+        <main className="min-h-screen">{children}</main>
       </div>
     </div>
   );

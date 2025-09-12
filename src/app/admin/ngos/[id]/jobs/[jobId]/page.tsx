@@ -2,14 +2,12 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
   MapPin,
   Building2,
   Globe,
-  Trash2,
   BadgeInfo,
 } from "lucide-react";
 
