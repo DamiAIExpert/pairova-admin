@@ -2,21 +2,37 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { AdminAuthService } from '@/lib/services/auth.service';
+import { useMutation } from '@/hooks/useApi';
 
 // The component has been updated to remove Next.js specific imports ('next/image', 'next/navigation')
 // to resolve compilation errors. Standard HTML elements and browser APIs are used instead.
 export default function AdminLoginPage() {
-  const [adminId, setAdminId] = useState('');
-  const [passcode, setPasscode] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { mutate: login, loading, error } = useMutation(
+    ({ email, password }: { email: string; password: string }) =>
+      AdminAuthService.login({ email, password }),
+    {
+      onSuccess: () => {
+        // Redirect to dashboard on successful login
+        window.location.href = '/admin/dashboard';
+      },
+      onError: (error) => {
+        console.error('Login failed:', error);
+      },
+    }
+  );
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault(); // prevent page reload
     
-    // In a real application, you would add your validation and authentication logic here.
-    console.log('Logging in with:', { adminId, passcode });
+    if (!email || !password) {
+      return;
+    }
 
-    // Replaced Next.js router with standard window.location to handle redirection.
-    window.location.href = '/admin/dashboard';
+    login({ email, password });
   };
 
   return (
@@ -43,50 +59,58 @@ export default function AdminLoginPage() {
 
         {/* Login Form */}
         <form className="space-y-6" onSubmit={handleLogin}>
-          {/* Admin ID */}
+          {/* Email */}
           <div>
             <label
-              htmlFor="admin-id"
+              htmlFor="email"
               className="block text-sm font-medium text-gray-800 mb-1 font-poppins"
             >
-              Admin ID
+              Email
             </label>
             <input
-              id="admin-id"
-              type="text"
-              value={adminId}
-              onChange={(e) => setAdminId(e.target.value)}
-              placeholder="Enter ID"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
               required
               className="w-full h-[75px] px-4 border border-[#818181] rounded-[7px] text-black font-poppins placeholder:text-[#c4c4c4] focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
-          {/* Passcode */}
+          {/* Password */}
           <div>
             <label
-              htmlFor="passcode"
+              htmlFor="password"
               className="block text-sm font-medium text-gray-800 mb-1 font-poppins"
             >
-              Passcode
+              Password
             </label>
             <input
-              id="passcode"
+              id="password"
               type="password"
-              value={passcode}
-              onChange={(e) => setPasscode(e.target.value)}
-              placeholder="Enter passcode"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
               required
               className="w-full h-[75px] px-4 border border-[#818181] rounded-[7px] text-black font-poppins placeholder:text-[#c4c4c4] focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="text-red-500 text-sm text-center">
+              {error}
+            </div>
+          )}
 
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full h-[50px] bg-black text-white rounded-md font-poppins font-medium hover:bg-gray-900 transition-colors"
+            disabled={loading}
+            className="w-full h-[50px] bg-black text-white rounded-md font-poppins font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

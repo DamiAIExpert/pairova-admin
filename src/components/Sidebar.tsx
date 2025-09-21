@@ -17,6 +17,7 @@ const navLinks: NavLink[] = [
   { href: "/admin/job-seekers", iconSrc: "/sidebar-icons/candidate.svg", label: "Job seekers" },
   { href: "/admin/ngos", iconSrc: "/sidebar-icons/ngo.svg", label: "Non Profits" },
   { href: "/admin/settings", iconSrc: "/sidebar-icons/settings.svg", label: "Settings" },
+  { href: "/admin/settings/storage", iconSrc: "/sidebar-icons/cloud.svg", label: "Storage" },
   { href: "/admin/track", iconSrc: "/sidebar-icons/track.svg", label: "Track" }, // new item
 ];
 

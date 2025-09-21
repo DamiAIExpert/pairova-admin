@@ -1,21 +1,22 @@
-# Pairova Admin & Candidate Portal
+# Pairova Admin Dashboard
 
-A modern, full‑stack **Next.js (App Router)** project that powers the Pairova admin and candidate experience. It includes job‑seeker management, NGO job applicant pipelines, candidate profiles, applied‑jobs views, feedback moderation, and an audit log — all built with **TypeScript**, **Tailwind CSS**, and **Lucide** icons.
+A modern, full‑stack **Next.js (App Router)** admin dashboard for the Pairova platform. It provides comprehensive management capabilities for job seekers, NGOs, applications, feedback, and system analytics — all built with **TypeScript**, **Tailwind CSS**, and integrated with a powerful **NestJS backend API**.
 
-> This repository was bootstrapped with `create-next-app` and upgraded with opinionated structure & UI utilities for a smooth developer experience.
+> This repository was bootstrapped with `create-next-app` and enhanced with complete API integration, authentication, and real-time data management.
 
 ---
 
 ## Table of Contents
 
 - [Quick Start](#quick-start)
+- [API Integration](#api-integration)
+- [Features](#features)
 - [Scripts](#scripts)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [Key Routes & Flows](#key-routes--flows)
-- [Styling & Fonts](#styling--fonts)
+- [Authentication](#authentication)
 - [Environment Variables](#environment-variables)
-- [Data & API Notes](#data--api-notes)
+- [API Services](#api-services)
 - [Deployment](#deployment)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
@@ -25,28 +26,111 @@ A modern, full‑stack **Next.js (App Router)** project that powers the Pairova 
 
 ## Quick Start
 
-1. **Install dependencies**
+### Prerequisites
 
-   ```bash
-   npm i
-   # or
-   pnpm i
-   # or
-   yarn
-   # or
-   bun i
-   ```
+- **Node.js 18+** (20+ recommended)
+- **Backend API** running on `http://localhost:3001`
+- **AI Microservice** running on `http://localhost:8000` (for intelligent job matching)
+- **PostgreSQL Database** for data storage and prediction caching
 
-2. **Run the dev server**
+### 1. Install Dependencies
 
-   ```bash
-   npm run dev
-   # http://localhost:3000
-   ```
+```bash
+npm install
+# or
+pnpm install
+# or
+yarn
+# or
+bun install
+```
 
-3. **Open the app** at <http://localhost:3000>. The page auto‑updates as you edit files in `src/app`.
+### 2. Environment Setup
 
-> Requires **Node.js 18+** (or 20+ recommended).
+Create a `.env.local` file in the root directory:
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_APP_NAME=Pairova Admin Dashboard
+NEXT_PUBLIC_APP_VERSION=1.0.0
+```
+
+### 3. Start the Development Server
+
+```bash
+npm run dev
+# Server will be available at http://localhost:3000
+```
+
+### 4. Login
+
+- Navigate to `http://localhost:3000`
+- Use admin credentials to login
+- Access the full admin dashboard
+
+---
+
+## API Integration
+
+This admin dashboard is **fully integrated** with the Pairova backend API, providing:
+
+### ✅ Real-time Data
+- **Dashboard Statistics**: Live metrics and KPIs
+- **Performance Analytics**: Time-series data and trends
+- **Activity Feeds**: Real-time platform activity
+- **User Management**: Complete CRUD operations
+- **AI Predictions**: Intelligent job matching and recommendations
+
+### ✅ Authentication
+- **JWT Token Management**: Automatic token storage and refresh
+- **Role-based Access**: Admin-only functionality
+- **Session Persistence**: Maintains login state across browser refreshes
+
+### ✅ Error Handling
+- **Network Error Recovery**: Automatic retry mechanisms
+- **User-friendly Messages**: Clear error communication
+- **Loading States**: Smooth loading indicators
+
+---
+
+## Features
+
+### 📊 Dashboard
+- **Real-time Statistics**: User counts, job metrics, application trends
+- **Performance Charts**: Visual analytics with Chart.js/Recharts
+- **Activity Feed**: Live platform activity stream
+- **AI Recommendations**: Smart insights and suggestions powered by ML microservice
+- **Prediction Analytics**: AI model performance and accuracy metrics
+
+### 👥 User Management
+- **Job Seekers**: Complete applicant profile management
+- **NGOs**: Organization management and job statistics
+- **User Verification**: Account verification and status management
+- **Bulk Operations**: Mass user management capabilities
+
+### 📋 Application Pipeline
+- **Status Tracking**: Application progress monitoring
+- **Pipeline Management**: Visual workflow management
+- **Candidate Evaluation**: Detailed applicant assessment
+- **Hiring Analytics**: Success rate tracking
+
+### 💬 Feedback System
+- **User Feedback**: Platform feedback collection and management
+- **Moderation Tools**: Feedback review and response
+- **Analytics**: Feedback trends and insights
+- **Priority Management**: Feedback categorization and routing
+
+### 🔍 Audit & Logging
+- **System Logs**: Complete audit trail
+- **User Actions**: Track all administrative actions
+- **Security Monitoring**: Login attempts and security events
+- **Data Export**: Log export capabilities
+
+### ⚙️ Settings Management
+- **Email Configuration**: SMTP and email provider settings
+- **SMS Settings**: SMS provider configuration
+- **Frontend CMS**: Page content management
+- **System Preferences**: Platform-wide settings
 
 ---
 
@@ -56,7 +140,7 @@ A modern, full‑stack **Next.js (App Router)** project that powers the Pairova 
 |------------------|-----------------------------------------------|
 | `dev`            | Run the Next.js development server            |
 | `build`          | Create an optimized production build          |
-| `start`          | Start the production server (`.next/standalone`) |
+| `start`          | Start the production server                   |
 | `lint`           | Run ESLint                                    |
 | `typecheck`      | Run TypeScript type checks                    |
 
@@ -64,175 +148,255 @@ A modern, full‑stack **Next.js (App Router)** project that powers the Pairova 
 
 ## Tech Stack
 
-- **Next.js 14+ (App Router)** – file‑system routing, server actions
-- **TypeScript** – types & safer refactors
-- **Tailwind CSS** – utility‑first styling
-- **Lucide React** – icons
-- **next/font** – automatic font optimization
-- **Vercel** (optional) – zero‑config deploys
+- **Next.js 14+ (App Router)** – File‑system routing, server actions
+- **TypeScript** – Type safety and better development experience
+- **Tailwind CSS** – Utility‑first styling
+- **Lucide React** – Modern icon library
+- **Chart.js/Recharts** – Data visualization
+- **Custom API Client** – Robust API integration
+- **JWT Authentication** – Secure user management
 
 ---
 
 ## Project Structure
 
-> Only high‑value folders/files are shown.
-
 ```
 src/
   app/
-    layout.tsx
-    page.tsx
+    layout.tsx                    # Root layout with providers
+    page.tsx                      # Admin login page
     admin/
+      dashboard/
+        page.tsx                  # Main dashboard with real-time data
       job-seekers/
-        page.tsx                               # Candidates table with actions
+        page.tsx                  # Job seekers management
         [candidateId]/
-          page.tsx                             # Candidate profile (admin view)
+          page.tsx                # Candidate profile view
           edit/
-            page.tsx                           # Edit candidate (admin)
-          applied/
-            page.tsx                           # Candidate → Applied Jobs (admin)
+            page.tsx              # Edit candidate profile
       ngos/
-        [id]/jobs/[jobId]/
-          applicants/
-            page.tsx                           # Pipeline board: Applied/Review/Interview/Hiring
-            [applicantId]/
-              page.tsx                         # Applicant detail (model representation)
-    settings/
+        page.tsx                  # NGO management
+        [id]/
+          page.tsx                # NGO profile view
+          jobs/
+            page.tsx              # NGO job listings
+      applications/
+        page.tsx                  # Application pipeline
       feedback/
-        page.tsx                               # Feedback moderation + slide‑over
-      audit-log/
-        page.tsx                               # Admin audit trail
+        page.tsx                  # Feedback management
+      track/
+        page.tsx                  # Audit logs
+      settings/
+        page.tsx                  # System settings
+  lib/
+    api.ts                        # Base API client configuration
+    services/
+      admin.service.ts            # Admin API services
+      auth.service.ts             # Authentication services
+  hooks/
+    useApi.ts                     # Custom React hooks for API
+  components/
+    dashboard/                    # Dashboard components
+    ui/                          # Reusable UI components
   styles/
-    globals.css
-    fonts.css                                  # @font-face declarations (Poppins)
-public/
-  font/                                        # Local font files (.ttf)
-  favicon.ico
+    globals.css                   # Global styles
+    fonts.css                     # Font declarations (Poppins)
 ```
 
 ---
 
-## Key Routes & Flows
+## Authentication
 
-### Admin → Job Seekers
-- **List**: `/admin/job-seekers`  
-  - 3‑dot menu includes: **View**, **Edit**, **Delete**, **Applied Jobs**.
-  - **Applied Jobs** correctly routes to:  
-    `/admin/job-seekers/[candidateId]/applied`
+The admin dashboard uses JWT-based authentication:
 
-- **Profile**: `/admin/job-seekers/[candidateId]`  
-- **Edit**: `/admin/job-seekers/[candidateId]/edit`  
-- **Applied Jobs**: `/admin/job-seekers/[candidateId]/applied`
+### Login Process
+1. **Email/Password Authentication**: Secure admin login
+2. **Token Storage**: JWT tokens stored in localStorage
+3. **Automatic Refresh**: Token renewal handling
+4. **Protected Routes**: Admin-only access control
 
-### Admin → NGO → Job Applicants
-- **Board**: `/admin/ngos/[id]/jobs/[jobId]/applicants`  
-  Columns: *Applied Job*, *UnderReview*, *Interview*, *Hiring Job*.
-- **Applicant Detail** (exact design match):  
-  `/admin/ngos/[id]/jobs/[jobId]/applicants/[applicantId]`
-
-### Settings
-- **Feedback**: `/settings/feedback` – filterable table, slide‑over editing (Status / Priority / Category) with live updates.
-- **Audit Log**: `/settings/audit-log` – filterable/sortable admin activity log.
-
----
-
-## Styling & Fonts
-
-- Styling is done with **Tailwind**. Update tokens in `tailwind.config.js`.
-- Fonts use `@font-face` via `src/styles/fonts.css` and **local** `.ttf` files.
-
-**Important paths**
-
-- Font files are located at:  
-  `public/font/Poppins-*.ttf`
-- CSS expects either `/font/...` or `/fonts/...` depending on your setup.  
-  If you see network 404s such as:
-
-  ```txt
-  GET /fonts/Poppins-Regular.ttf 404
-  ```
-
-  you have two options:
-
-  1. **Rename the folder** to `public/fonts` **(preferred)**, or
-  2. **Update `fonts.css`** to use `/font/...` (singular) to match your folder.
-
-Example `fonts.css` snippet:
-
-```css
-@font-face {
-  font-family: 'Poppins';
-  src: url('/font/Poppins-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-```
-
-> Then import `fonts.css` once (e.g., in `src/app/layout.tsx` or `globals.css`).
+### Security Features
+- **Role-based Access**: Admin-only functionality
+- **Session Management**: Automatic logout on token expiration
+- **CSRF Protection**: Built-in security measures
+- **Secure Headers**: API request security
 
 ---
 
 ## Environment Variables
 
-This project runs without secrets by default. If you introduce APIs, add a `.env.local` like:
+Create a `.env.local` file:
 
-```ini
-NEXT_PUBLIC_API_BASE=https://api.example.com
-# SERVER_ONLY_SECRET=...
+```bash
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:3001
+
+# App Configuration
+NEXT_PUBLIC_APP_NAME=Pairova Admin Dashboard
+NEXT_PUBLIC_APP_VERSION=1.0.0
+
+# Optional: Analytics
+NEXT_PUBLIC_ANALYTICS_ID=your-analytics-id
 ```
 
-Never commit secrets; use `.env.local` for local dev and your platform’s secret manager in prod.
+**Important**: Never commit `.env.local` to version control. Use your platform's secret manager in production.
 
 ---
 
-## Data & API Notes
+## API Services
 
-Many admin pages currently use **mock data** (arrays within the components) to match the final UI/UX. To wire to a backend:
+### AdminService
+Complete admin functionality with methods for:
+- **Dashboard**: `getDashboardStats()`, `getPerformanceMetrics()`
+- **Users**: `getUsers()`, `updateUser()`, `deleteUser()`
+- **Job Seekers**: `getJobSeekers()`, `updateJobSeeker()`
+- **NGOs**: `getNgos()`, `updateNgo()`, `getNgoStatistics()`
+- **Applications**: `getApplications()`, `updateApplicationStatus()`
+- **Feedback**: `getFeedback()`, `updateFeedback()`
 
-- Replace the mock arrays with `fetch`/`axios` calls (Server Components preferred where possible).
-- Add loading and empty states.
-- Preserve the existing props/interfaces to keep UI stable.
-- For slide‑overs (e.g., Feedback), call your API on change and optimistically update local state.
+### AuthService
+Authentication management:
+- **Login**: `login(email, password)`
+- **Logout**: `logout()`
+- **Profile**: `getCurrentUser()`
+- **Token Management**: Automatic JWT handling
+
+### Custom Hooks
+- **`useApi`**: Generic hook for API calls with loading/error states
+- **`useMutation`**: Hook for POST/PUT/DELETE operations
+- **`usePaginatedApi`**: Hook for paginated data management
+
+---
+
+## API Endpoints
+
+The dashboard integrates with **25+ backend endpoints**:
+
+### Dashboard
+- `GET /admin/dashboard-stats` - Main statistics
+- `GET /admin/dashboard/performance` - Performance metrics
+- `GET /admin/dashboard/activity` - Activity feed
+- `GET /admin/dashboard/recommendations` - AI insights
+
+### User Management
+- `GET /admin/users` - User listing with pagination
+- `GET /admin/job-seekers` - Job seekers management
+- `GET /admin/ngos` - NGO management
+- `PUT /admin/users/:id` - User updates
+- `DELETE /admin/users/:id` - User deletion
+
+### Applications & Feedback
+- `GET /admin/applications` - Application pipeline
+- `PUT /admin/applications/:id/status` - Status updates
+- `GET /admin/feedback` - Feedback management
+- `GET /admin/audit/logs` - Audit logs
 
 ---
 
 ## Deployment
 
-### Vercel (recommended)
-- Push to GitHub and import the repo on Vercel.
-- Framework preset: **Next.js**.
-- Environment variables: add any from `.env.local`.
+### Vercel (Recommended)
 
-### Node / Docker
-- Build: `npm run build`
-- Start: `npm run start` (serves `.next/standalone` if configured)
+1. **Push to GitHub**
+2. **Import on Vercel**
+3. **Configure Environment Variables**:
+   ```
+   NEXT_PUBLIC_API_URL=https://your-api-domain.com
+   NEXT_PUBLIC_APP_NAME=Pairova Admin Dashboard
+   ```
+4. **Deploy**: Automatic deployment on push
+
+### Docker
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### Manual Deployment
+
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm start
+```
 
 ---
 
 ## Troubleshooting
 
-### Font 404s
+### Common Issues
+
+#### API Connection Errors
+- **Symptom**: "Network error" or 404s
+- **Solution**: Ensure backend is running on `http://localhost:3001`
+- **Check**: Verify `NEXT_PUBLIC_API_URL` in `.env.local`
+
+#### Authentication Issues
+- **Symptom**: Login fails or redirects
+- **Solution**: Check JWT token validity and backend authentication
+- **Debug**: Check browser console for API errors
+
+#### Font Loading Issues
 - **Symptom**: `GET /fonts/Poppins-*.ttf 404`
-- **Fix**: Ensure your folder is **`public/fonts/`** *or* update `fonts.css` to match `public/font/`.
+- **Solution**: Ensure fonts are in `public/fonts/` directory
+- **Fix**: Update `fonts.css` paths if needed
 
-### Images 404
-- Use Next’s static `public/` directory (e.g., `/logo.svg`) or configure `next.config.js` for remote domains.
+#### TypeScript Errors
+- **Solution**: Run `npm run typecheck` for diagnostics
+- **Fix**: Ensure all API types are properly imported
 
-### Type errors
-- Run `npm run typecheck` to see TS diagnostics.
+### Development Tips
+
+1. **API Testing**: Use browser dev tools to monitor API calls
+2. **State Management**: Check React DevTools for component state
+3. **Error Boundaries**: Implement error boundaries for better error handling
+4. **Loading States**: Always provide loading indicators for API calls
 
 ---
 
 ## Contributing
 
-1. Fork the repo & create a feature branch.
-2. Keep PRs focused and include screenshots for UI changes.
-3. Add/adjust tests where relevant.
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
+4. **Push to branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Development Guidelines
+
+- **TypeScript**: Maintain type safety throughout
+- **API Integration**: Use existing API services and hooks
+- **Error Handling**: Implement proper error boundaries
+- **Testing**: Add tests for new features
+- **Documentation**: Update README for significant changes
 
 ---
 
 ## License
 
-Copyright © Pairova. All rights reserved.  
-If you need a specific OSS license (MIT/Apache-2.0), add it here and in a `LICENSE` file.
+Copyright © Pairova. All rights reserved.
+
+For licensing inquiries, please contact the development team.
+
+---
+
+## Support
+
+For technical support or questions:
+
+- **Documentation**: Check this README and inline code comments
+- **API Documentation**: Available at `http://localhost:3001/api-docs` (Swagger)
+- **Issues**: Create GitHub issues for bugs or feature requests
+
+---
+
+**Built with ❤️ by the Pairova Team**
