@@ -154,3 +154,4 @@ export interface StorageProviderStats {
   averageFileSize: number;
   fileCount: number;
 }
+

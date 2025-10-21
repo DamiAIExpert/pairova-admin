@@ -19,8 +19,8 @@ export interface ApiError {
 }
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const API_VERSION = '/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_VERSION = ''; // Backend doesn't use /api/v1 prefix
 
 class ApiClient {
   private baseURL: string;
@@ -83,9 +83,14 @@ class ApiClient {
         } as ApiError;
       }
 
-      const data = await response.json();
+      const responseData = await response.json();
+      
+      // Backend wraps responses in { success, statusCode, data } format
+      // Extract the actual data from the wrapper
+      const actualData = responseData.data !== undefined ? responseData.data : responseData;
+      
       return {
-        data,
+        data: actualData,
         status: response.status,
       };
     } catch (error) {
@@ -178,4 +183,5 @@ export const handleApiError = (error: any): string => {
   
   return error.message || 'An unexpected error occurred.';
 };
+
 

@@ -1,28 +1,45 @@
 // src/lib/services/auth.service.ts
-// Authentication API services for admin dashboard
+// Authentication API services
 
 import { apiClient } from '../api';
 
-export interface AdminLoginRequest {
+export interface LoginRequest {
   email: string;
   password: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  role: Role;
 }
 
 export interface AuthResponse {
   user: {
     id: string;
     email: string;
-    role: string;
+    role: Role;
     isVerified: boolean;
+    firstName?: string;
+    lastName?: string;
+    orgName?: string;
+    phone?: string;
+    lastLoginAt?: string;
+    createdAt: string;
+    updatedAt: string;
   };
-  token: string;
+  accessToken: string;
+  refreshToken?: string;
 }
 
-export interface AdminProfile {
+export interface UserProfile {
   id: string;
   email: string;
-  role: string;
+  role: Role;
   isVerified: boolean;
+  firstName?: string;
+  lastName?: string;
+  orgName?: string;
   phone?: string;
   lastLoginAt?: string;
   createdAt: string;
@@ -34,18 +51,36 @@ export interface ForgotPasswordRequest {
 }
 
 export interface ResetPasswordRequest {
+  email: string;
   token: string;
-  password: string;
+  newPassword: string;
 }
 
-export class AdminAuthService {
+export enum Role {
+  ADMIN = 'ADMIN',
+  APPLICANT = 'APPLICANT',
+  NONPROFIT = 'NONPROFIT',
+}
+
+export class AuthService {
   // Authentication endpoints
-  static async login(credentials: AdminLoginRequest): Promise<AuthResponse> {
+  static async login(credentials: LoginRequest): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
     
     // Store token after successful login
-    if (response.data.token) {
-      apiClient.setToken(response.data.token);
+    if (response.data.accessToken) {
+      apiClient.setToken(response.data.accessToken);
+    }
+    
+    return response.data;
+  }
+
+  static async register(userData: RegisterRequest): Promise<AuthResponse> {
+    const response = await apiClient.post<AuthResponse>('/auth/register', userData);
+    
+    // Store token after successful registration
+    if (response.data.accessToken) {
+      apiClient.setToken(response.data.accessToken);
     }
     
     return response.data;
@@ -64,8 +99,8 @@ export class AdminAuthService {
     }
   }
 
-  static async getCurrentUser(): Promise<AdminProfile> {
-    const response = await apiClient.get<AdminProfile>('/auth/profile');
+  static async getCurrentUser(): Promise<UserProfile> {
+    const response = await apiClient.get<UserProfile>('/auth/profile');
     return response.data;
   }
 
@@ -89,6 +124,19 @@ export class AdminAuthService {
     return response.data;
   }
 
+  static async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+    const response = await apiClient.post<{ accessToken: string }>('/auth/refresh', {
+      refreshToken,
+    });
+    
+    // Update stored token
+    if (response.data.accessToken) {
+      apiClient.setToken(response.data.accessToken);
+    }
+    
+    return response.data;
+  }
+
   // Check if user is authenticated
   static isAuthenticated(): boolean {
     return !!apiClient['token'];
@@ -99,11 +147,25 @@ export class AdminAuthService {
     return apiClient['token'];
   }
 
-  // Check if user has admin role
-  static isAdmin(): boolean {
+  // Check if user has specific role
+  static hasRole(role: Role): boolean {
     // This would typically check the user's role from the stored user data
-    // For now, we'll assume if they have a token, they're an admin
+    // For now, we'll assume if they have a token, they have the role
     return this.isAuthenticated();
   }
-}
 
+  // Check if user is admin
+  static isAdmin(): boolean {
+    return this.hasRole(Role.ADMIN);
+  }
+
+  // Check if user is applicant
+  static isApplicant(): boolean {
+    return this.hasRole(Role.APPLICANT);
+  }
+
+  // Check if user is nonprofit
+  static isNonprofit(): boolean {
+    return this.hasRole(Role.NONPROFIT);
+  }
+}

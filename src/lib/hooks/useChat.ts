@@ -519,3 +519,4 @@ export function useChat(): ChatHookReturn {
     clearError,
   };
 }
+

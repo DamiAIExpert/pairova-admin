@@ -69,17 +69,17 @@ export class AdminService {
   }
 
   static async getPerformanceMetrics(period: string = '30d'): Promise<PerformanceMetrics> {
-    const response = await apiClient.get<PerformanceMetrics>('/admin/dashboard/performance', { period });
+    const response = await apiClient.get<PerformanceMetrics>('/admin/performance-metrics', { period });
     return response.data;
   }
 
   static async getActivityFeed(limit: number = 10): Promise<ActivityFeed> {
-    const response = await apiClient.get<ActivityFeed>('/admin/dashboard/activity', { limit });
+    const response = await apiClient.get<ActivityFeed>('/admin/activity-feed', { limit });
     return response.data;
   }
 
   static async getRecommendations(): Promise<Recommendations> {
-    const response = await apiClient.get<Recommendations>('/admin/dashboard/recommendations');
+    const response = await apiClient.get<Recommendations>('/admin/recommendations');
     return response.data;
   }
 
