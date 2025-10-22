@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { AdminAuthService } from '@/lib/services/auth.service';
+import { AuthService } from '@/lib/services/auth.service';
 import { useMutation } from '@/hooks/useApi';
 
 // The component has been updated to remove Next.js specific imports ('next/image', 'next/navigation')
@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
 
   const { mutate: login, loading, error } = useMutation(
     ({ email, password }: { email: string; password: string }) =>
-      AdminAuthService.login({ email, password }),
+      AuthService.login({ email, password }),
     {
       onSuccess: () => {
         // Redirect to dashboard on successful login

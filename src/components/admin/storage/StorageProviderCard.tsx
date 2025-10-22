@@ -12,10 +12,9 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { 
-  Cloudinary, 
-  Aws, 
-  Google, 
-  Azure, 
+  Cloud, 
+  Server, 
+  Database, 
   HardDrive, 
   MoreVertical, 
   TestTube, 
@@ -41,13 +40,13 @@ interface StorageProviderCardProps {
 const getProviderIcon = (type: string) => {
   switch (type) {
     case 'cloudinary':
-      return <Cloudinary className="h-6 w-6 text-blue-500" />;
+      return <Cloud className="h-6 w-6 text-blue-500" />;
     case 'aws_s3':
-      return <Aws className="h-6 w-6 text-orange-500" />;
+      return <Server className="h-6 w-6 text-orange-500" />;
     case 'google_cloud_storage':
-      return <Google className="h-6 w-6 text-green-500" />;
+      return <Database className="h-6 w-6 text-green-500" />;
     case 'azure_blob':
-      return <Azure className="h-6 w-6 text-blue-600" />;
+      return <Cloud className="h-6 w-6 text-blue-600" />;
     case 'local':
       return <HardDrive className="h-6 w-6 text-gray-500" />;
     default:

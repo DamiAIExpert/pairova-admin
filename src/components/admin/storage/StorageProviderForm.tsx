@@ -23,10 +23,9 @@ import {
   FormMessage 
 } from '@/components/ui/form';
 import { 
-  Cloudinary, 
-  Aws, 
-  Google, 
-  Azure, 
+  Cloud, 
+  Server, 
+  Database, 
   HardDrive,
   TestTube,
   CheckCircle,
@@ -56,13 +55,13 @@ interface StorageProviderFormProps {
 const getProviderIcon = (type: string) => {
   switch (type) {
     case 'cloudinary':
-      return <Cloudinary className="h-5 w-5 text-blue-500" />;
+      return <Cloud className="h-5 w-5 text-blue-500" />;
     case 'aws_s3':
-      return <Aws className="h-5 w-5 text-orange-500" />;
+      return <Server className="h-5 w-5 text-orange-500" />;
     case 'google_cloud_storage':
-      return <Google className="h-5 w-5 text-green-500" />;
+      return <Database className="h-5 w-5 text-green-500" />;
     case 'azure_blob':
-      return <Azure className="h-5 w-5 text-blue-600" />;
+      return <Cloud className="h-5 w-5 text-blue-600" />;
     case 'local':
       return <HardDrive className="h-5 w-5 text-gray-500" />;
     default:
@@ -482,25 +481,25 @@ export default function StorageProviderForm({
                         <SelectContent>
                           <SelectItem value="cloudinary">
                             <div className="flex items-center space-x-2">
-                              <Cloudinary className="h-4 w-4" />
+                              <Cloud className="h-4 w-4" />
                               <span>Cloudinary</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="aws_s3">
                             <div className="flex items-center space-x-2">
-                              <Aws className="h-4 w-4" />
+                              <Server className="h-4 w-4" />
                               <span>AWS S3</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="google_cloud_storage">
                             <div className="flex items-center space-x-2">
-                              <Google className="h-4 w-4" />
+                              <Database className="h-4 w-4" />
                               <span>Google Cloud Storage</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="azure_blob">
                             <div className="flex items-center space-x-2">
-                              <Azure className="h-4 w-4" />
+                              <Cloud className="h-4 w-4" />
                               <span>Azure Blob Storage</span>
                             </div>
                           </SelectItem>
